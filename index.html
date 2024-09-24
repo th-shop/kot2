@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เช็คข้อมูล IP Address</title>
+    <style>
+        /* พื้นหลังภาพและเอฟเฟกต์แสง */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-image: url('https://www.transparenttextures.com/patterns/bright-squares.png'), url('https://i.imgur.com/kJop5Vp.jpg');
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        /* กรอบสวยงาม */
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            width: 350px;
+            border: 2px solid #fff;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            box-shadow: 0px 6px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff416c;
+            box-shadow: 0px 8px 25px rgba(255, 255, 255, 0.4);
+        }
+
+        button {
+            padding: 15px 30px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 30px;
+            background-color: #ff416c;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 8px 25px rgba(255, 65, 108, 0.5);
+        }
+
+        button:hover {
+            background-color: #ff4b2b;
+            box-shadow: 0px 10px 35px rgba(255, 65, 108, 0.7);
+        }
+
+        /* กล่องข้อมูลสไตล์ 3D */
+        .ip-info {
+            margin-top: 30px;
+            text-align: left;
+            display: inline-block;
+            border-radius: 20px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            color: #333;
+            width: 500px;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        .ip-info p {
+            margin: 10px 0;
+            font-size: 1.3rem;
+            color: #333;
+        }
+
+        .ip-info strong {
+            color: #007bff;
+        }
+
+        /* แอนิเมชั่นการแสดงผล */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ฟุตเตอร์ */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            font-size: 12px;
+            color: #f0f0f0;
+        }
+
+        /* ไอคอน */
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ff416c;
+            text-shadow: 0 0 10px rgba(255, 65, 108, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="icon">🌍</div>
+        <h1>เช็คข้อมูล IP Address</h1>
+
+        <div class="input-section">
+            <input type="text" id="ip" placeholder="กรอก IP Address เช่น 8.8.8.8">
+            <button onclick="getIPInfo()">เช็ค IP</button>
+        </div>
+
+        <div class="ip-info" id="ip-info"></div>
+
+        <div class="footer">© 2024 เช็คข้อมูล IP โดย IPinfo</div>
+    </div>
+
+    <script>
+        function getIPInfo() {
+            const ipAddress = document.getElementById('ip').value;
+            if (!ipAddress) {
+                alert("กรุณากรอก IP Address");
+                return;
+            }
+
+            fetch(`https://ipinfo.io/${ipAddress}/json?token=70330ae9396417`)
+                .then(response => response.json())
+                .then(data => {
+                    const ipInfoDiv = document.getElementById('ip-info');
+                    ipInfoDiv.innerHTML = `
+                        <p><strong>ที่อยู่ IP:</strong> ${data.ip}</p>
+                        <p><strong>ชื่อโฮสต์:</strong> ${data.hostname ? data.hostname : 'ไม่ทราบ'}</p>
+                        <p><strong>ตำแหน่งที่ตั้ง:</strong> ${data.city}, ${data.region}, ${data.country}</p>
+                        <p><strong>ละติจูด/ลองจิจูด:</strong> ${data.loc}</p>
+                        <p><strong>ผู้ให้บริการเครือข่าย (ISP):</strong> ${data.org}</p>
+                        <p><strong>เขตเวลา:</strong> ${data.timezone}</p>
+                        <p><strong>รหัสไปรษณีย์:</strong> ${data.postal}</p>
+                        <p><strong>ข้อมูลเพิ่มเติม:</strong> <a href="https://ipinfo.io/${data.ip}" target="_blank">คลิกที่นี่</a></p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    alert('ไม่สามารถดึงข้อมูลได้ กรุณาตรวจสอบ IP Address');
+                });
+        }
+    </script>
+</body>
+</html>
